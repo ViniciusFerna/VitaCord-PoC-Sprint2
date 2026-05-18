@@ -18,7 +18,84 @@
 
 ---
 
-## 2. Persona Escolhida
+## 2. Instruções de Execução
+
+### Pré-requisitos
+
+- Python 3.10+
+- [Ollama](https://ollama.com) instalado
+- Git
+
+### 2.1 Clonar o repositório
+
+```bash
+git clone https://github.com/ViniciusFerna/VitaCord-PoC-Sprint2.git
+cd VitaCord-PoC-Sprint2
+```
+
+### 2.2 Instalar dependências Python
+
+```bash
+pip install -r requirements.txt
+```
+
+Conteúdo do `requirements.txt`:
+
+```
+ollama
+langchain
+langchain-community
+langgraph
+chromadb
+streamlit
+```
+
+### 2.3 Instalar e iniciar os modelos no Ollama
+
+```bash
+# Modelo principal
+ollama pull qwen3.5:9b
+
+# Modelo de embeddings para o RAG
+ollama pull nomic-embed-text
+
+# Iniciar o servidor Ollama (caso não suba automaticamente)
+ollama serve
+```
+
+### 2.4 Popular o vector store (RAG)
+
+O vector store é populado automaticamente na inicialização do sistema a partir dos documentos definidos em `/data/knowledge_base/documentos.py`. Nenhuma etapa manual é necessária, o ChromaDB indexa os documentos em memória ao subir a aplicação.
+
+Para adicionar novos documentos à base de conhecimento, edite o arquivo `/data/knowledge_base/documentos.py` e adicione um novo item à lista `DOCUMENTOS_CLINICOS`:
+
+```python
+{
+    "id": "novo_documento",
+    "conteudo": """
+    Título do documento
+    Conteúdo clínico relevante...
+    """
+}
+```
+
+### 2.5 Rodar a aplicação
+
+Sempre a partir da raiz do projeto:
+
+```bash
+py -m streamlit run ./app/app.py
+```
+
+A interface abre automaticamente em `http://localhost:8501`.
+
+### 2.6 Rodar os evals
+
+Os evals podem ser executados pelo botão **"Executar Suite de Evals"** na sidebar da interface Streamlit. O resultado é salvo automaticamente em `/evals/sprint2_results.json`.
+
+---
+
+## 3. Persona Escolhida
 
 ### Camila Souza, 34 anos — Analista de Marketing
 
@@ -40,7 +117,7 @@ Ela gostaria de sentir que seu médico está sempre bem informado sobre seu esta
 
 ---
 
-## 3. Justificativa da Persona
+## 4. Justificativa da Persona
 
 A paciente é a beneficiária final do sistema e, ao mesmo tempo, a principal fonte de dados que o alimenta. Ela possui uma condição de saúde que demanda acompanhamento contínuo, mas que frequentemente não encontra suporte adequado dentro do modelo tradicional de saúde. O fato de já utilizar um smartwatch no cotidiano a torna uma candidata natural para o sistema, demonstrando familiaridade prévia com tecnologia e dispositivos wearables.
 
@@ -48,7 +125,7 @@ O agente de IA voltado para esse perfil deve equilibrar acessibilidade e serieda
 
 ---
 
-## 4. Stack Técnica Selecionada
+## 5. Stack Técnica Selecionada
 
 | Camada | Tecnologia | Justificativa |
 |---|---|---|
@@ -62,26 +139,26 @@ O agente de IA voltado para esse perfil deve equilibrar acessibilidade e serieda
 
 ---
 
-## 5. Riscos Clínicos
+## 6. Riscos Clínicos
 
-### 5.1 Alucinação em Contexto Médico
+### 6.1 Alucinação em Contexto Médico
 Modelos de linguagem podem gerar informações clinicamente incorretas com aparência de confiabilidade. Para mitigar esse risco, o agente não fornece diagnósticos nem prescrições, sua atuação se limita à coleta de dados e apresentação de padrões ao médico.
 
-### 5.2 Viés nos Dados
+### 6.2 Viés nos Dados
 Dados coletados por wearables podem ser imprecisos dependendo do tipo de sensor, posicionamento ou condição do usuário. O sistema trata os dados como indicativos, não como diagnósticos, e sempre os apresenta sob supervisão médica.
 
-### 5.3 LGPD e Privacidade
+### 6.3 LGPD e Privacidade
 Dados de saúde são dados sensíveis sob a Lei Geral de Proteção de Dados (Lei nº 13.709/2018). As mitigações adotadas incluem criptografia em repouso e em trânsito, controle de acesso por perfil e logs de auditoria de todas as interações com o sistema.
 
-### 5.4 Responsabilidade sobre Prescrição
+### 6.4 Responsabilidade sobre Prescrição
 O sistema não gera prescrições de forma autônoma. Toda prescrição é criada pelo médico responsável após análise dos dados apresentados pelo sistema, garantindo que a responsabilidade clínica permaneça integralmente com o profissional habilitado.
 
-### 5.5 Tentativas de Jailbreak
+### 6.5 Tentativas de Jailbreak
 Usuários podem tentar induzir o agente a fornecer diagnósticos ou prescrições por meio de framing fictício, hipotético ou por alegação de autoridade. O system prompt contém instruções explícitas de recusa para esses cenários, com redirecionamento para o escopo correto.
 
 ---
 
-## 6. Arquitetura Proposta
+## 7. Arquitetura Proposta
 
 O sistema é composto por seis camadas principais:
 
@@ -101,7 +178,7 @@ O sistema é composto por seis camadas principais:
 
 ---
 
-## 7. Diagrama do Grafo LangGraph
+## 8. Diagrama do Grafo LangGraph
 
 O grafo de orquestração implementado segue a estrutura abaixo:
 
@@ -152,7 +229,7 @@ class EstadoClinico(TypedDict):
 
 ---
 
-## 8. Análise Comparativa de Modelos LLM
+## 9. Análise Comparativa de Modelos LLM
 
 | Critério | GPT-5.4 (OpenAI API) | Qwen3.5:9b (Local via Ollama) |
 |---|---|---|
@@ -169,82 +246,7 @@ Para o estágio atual do projeto, o **Qwen3.5:9b** é o modelo adotado por elimi
 
 ---
 
-## 9. Instruções de Execução
 
-### Pré-requisitos
-
-- Python 3.10+
-- [Ollama](https://ollama.com) instalado
-- Git
-
-### 9.1 Clonar o repositório
-
-```bash
-git clone https://github.com/ViniciusFerna/VitaCord-PoC-Sprint2.git
-cd VitaCord-PoC-Sprint2
-```
-
-### 9.2 Instalar dependências Python
-
-```bash
-pip install -r requirements.txt
-```
-
-Conteúdo do `requirements.txt`:
-
-```
-ollama
-langchain
-langchain-community
-langgraph
-chromadb
-streamlit
-```
-
-### 9.3 Instalar e iniciar os modelos no Ollama
-
-```bash
-# Modelo principal
-ollama pull qwen3.5:9b
-
-# Modelo de embeddings para o RAG
-ollama pull nomic-embed-text
-
-# Iniciar o servidor Ollama (caso não suba automaticamente)
-ollama serve
-```
-
-### 9.4 Popular o vector store (RAG)
-
-O vector store é populado automaticamente na inicialização do sistema a partir dos documentos definidos em `/data/knowledge_base/documentos.py`. Nenhuma etapa manual é necessária — o ChromaDB indexa os documentos em memória ao subir a aplicação.
-
-Para adicionar novos documentos à base de conhecimento, edite o arquivo `/data/knowledge_base/documentos.py` e adicione um novo item à lista `DOCUMENTOS_CLINICOS`:
-
-```python
-{
-    "id": "novo_documento",
-    "conteudo": """
-    Título do documento
-    Conteúdo clínico relevante...
-    """
-}
-```
-
-### 9.5 Rodar a aplicação
-
-Sempre a partir da raiz do projeto:
-
-```bash
-py -m streamlit run ./app/app.py
-```
-
-A interface abre automaticamente em `http://localhost:8501`.
-
-### 9.6 Rodar os evals
-
-Os evals podem ser executados pelo botão **"Executar Suite de Evals"** na sidebar da interface Streamlit. O resultado é salvo automaticamente em `/evals/sprint2_results.json`.
-
----
 
 ## 10. Exemplos de Uso
 
@@ -309,10 +311,6 @@ Resultados obtidos na execução da suite sobre o sistema final (`/evals/sprint2
 
 ## 12. Trade-offs Encontrados
 
-**Function calling inconsistente no modelo local**
-
-O `qwen3.5:9b` via Ollama frequentemente responde em texto sem acionar as tools de forma estruturada, mesmo quando a intenção é clara. A solução adotada foi implementar detecção de intenção por palavras-chave no nó de triagem, forçando a chamada das tools antes de passar para o LLM. Isso garante rastreabilidade, mas reduz a flexibilidade — padrões de linguagem não mapeados nas palavras-chave podem não acionar a tool corretamente.
-
 **RAG recuperando documentos irrelevantes**
 
 Para mensagens sem conteúdo clínico explícito (agendamentos, consultas de histórico), o RAG recuperava os protocolos de Manchester por similaridade semântica genérica, injetando contexto desnecessário no prompt. A solução foi tornar o RAG condicional, acionado apenas quando a mensagem contém termos clínicos relevantes.
@@ -320,7 +318,3 @@ Para mensagens sem conteúdo clínico explícito (agendamentos, consultas de his
 **Latência elevada em modo de evals**
 
 Casos que passam pelo LLM apresentam latência média de 100–350 segundos em hardware sem GPU dedicada. Casos tratados por regex (red flags, fora de escopo) respondem em menos de 1 segundo. Para produção, o uso de GPU ou migração para API externa é necessário para tornar a latência aceitável.
-
-**Supervisor classificando jailbreaks como triagem**
-
-O prompt do supervisor originalmente oferecia apenas 3 opções (triagem, prescrição, escalada), fazendo com que perguntas fora de escopo e jailbreaks fossem classificados como triagem por ausência de alternativa. A correção foi adicionar `fora_escopo` como quarta opção explícita no prompt de classificação.
