@@ -4,7 +4,7 @@
 
 ## 1. Nome do Projeto
 
-**VitaCord** — Sistema integrado de monitoramento contínuo de saúde com suporte à decisão clínica por IA, desenvolvido pela CarePlus.
+**VitaCord** — Sistema integrado de monitoramento contínuo de saúde com suporte à decisão clínica por IA.
 
 ---
 
